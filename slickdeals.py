@@ -4,6 +4,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import numpy as np
 
 df = pd.DataFrame()
 r = requests.get("https://slickdeals.net/laptop-deals/")
@@ -15,21 +16,17 @@ items = []
 prices = []
 
 for i in soup.find_all('div', class_='itemImageAndName'):
-    item = i.find('a', class_='itemTitle bp-c-link')
+    item = i.find('a', class_='itemTitle')
     items.append(item.text)
-    price = i.find('img')
-    prices.append(str(price))
 
+for j in soup.find_all('div', class_='itemPrice'):
+    prices.append(j.text.strip())
+
+prices.append(np.nan)
+prices.append(np.nan)
 df['item'] = items
-df['price'] = prices   
+df['price'] = prices
 
-clean=[]
-
-for i,j in enumerate(df['price']):
-    clean.append(df['price'][i][5:15])
-    
-df['price'] = clean
-df['price'] = df['price'].str.split('=').str.get(0)
 
 df.to_csv('output.csv')
 
