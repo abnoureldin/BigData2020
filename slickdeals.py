@@ -6,29 +6,36 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 
-df = pd.DataFrame()
 r = requests.get("https://slickdeals.net/laptop-deals/")
-text = r.content
+text = r.text
 
 soup = BeautifulSoup(text, "html.parser")
 
-items = []
-prices = []
+brand=[]
+item=[]
+price=[]
+likes=[]
 
-for i in soup.find_all('div', class_='itemImageAndName'):
-    item = i.find('a', class_='itemTitle')
-    items.append(item.text)
+for x in soup.find_all('div', class_='fpItem'):
+    b = x.find('a', class_="itemStore")   
+    if b is not None:
+       brands = b.text
+    else:
+       brands = "None"
+    brand.append(brands)    
+    item.append(x.find('a', class_="itemTitle").text)    
+    p = x.find('div', class_="priceLine")
+    if p is not None:
+        prices = p.text
+    else:
+        prices = "None"
+    price.append(prices.strip())    
+    likes.append(x.find('span',class_="count").text)
 
-for j in soup.find_all('div', class_='itemPrice'):
-    prices.append(j.text.strip())
-
-prices.append(np.nan)
-prices.append(np.nan)
-df['item'] = items
-df['price'] = prices
-
-
-df.to_csv('output.csv')
+likes.append(np.nan)
+price.append(np.nan)
+df = pd.DataFrame({"Brand":brand, "Item":item, "Price":price, "Likes":likes})
+df.to_csv("output.csv", index=False, encoding="utf-8")
 
     
     
