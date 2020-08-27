@@ -2,6 +2,7 @@ import json
 import requests
 from datetime import datetime
 import threading
+from kafka import KafkaProducer
 
 ticker = 'XXBTZUSD'
 
@@ -18,8 +19,12 @@ def kraken(ticker):
 		return x
 
 
+producer = KafkaProducer(bootstrap_servers='localhost:9099')
+
 def stream():
 	threading.Timer(5.0,stream).start()
-	print(kraken(ticker))
+	producer.send('bitcoin', kraken(ticker).encode('utf-8'))
 
 stream()
+producer.flush()
+# producer.close()
