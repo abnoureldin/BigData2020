@@ -1,9 +1,6 @@
-from pykafka import KafkaClient
+from kafka import KafkaConsumer
 
-localhost = 'localhost:9099'
-client = KafkaClient(hosts=localhost)
-topic = client.topics['bigdata']
-consumer = topic.get_simple_consumer()
-for message in consumer:
-	if message is not None:
-		print(message.offset, message.value.decode())
+consumer = KafkaConsumer('shakespeare',bootstrap_servers='localhost:9099')
+
+for msg in consumer:
+	print(msg.value.decode())

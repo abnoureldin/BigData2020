@@ -1,12 +1,10 @@
-from pykafka import KafkaClient
-import string
+from kafka import KafkaProducer
 
-text = open('/home/hadoop/BigData2020/Shakespeare.txt','r').read()
-text.translate(str.maketrans('','',string.punctuation))
-text = text.split()
-localhost = 'localhost:9099'
-client = KafkaClient(hosts=localhost)
-topic = client.topics['bigdata']
-producer = topic.get_sync_producer()
-for i in text:
-	producer.produce(i.encode('ascii'))
+producer = KafkaProducer(bootstrap_servers='localhost:9099')
+
+with open('/home/hadoop/BigData2020/Shakespeare.txt') as f:
+	for line in f:
+		producer.send('shakespeare',line.encode('ascii'))
+
+producer.flush()
+producer.close()
