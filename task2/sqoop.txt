@@ -1,0 +1,1 @@
+sqoop import --connect "jdbc:mysql://localhost/bigdata" --username root --password "password" --table emp --target-dir="/user/sqoop" -m 1
