@@ -34,7 +34,7 @@ def kraken(ticker):
 producer = KafkaProducer(bootstrap_servers='localhost:9099')
 
 def stream():
-	threading.Timer(5.0,stream).start()
+	threading.Timer(60.0,stream).start()
 	producer.send('kraken',kraken(pair).encode('utf-8'))
 	producer.flush()
 
