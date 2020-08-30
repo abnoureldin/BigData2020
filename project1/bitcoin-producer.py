@@ -7,7 +7,7 @@ from kafka import KafkaProducer
 
 pair = 'XXBTZUSD'
 
-def kraken(ticker):
+def kraken(pair):
 	url = "https://api.kraken.com/0/public/OHLC"
 	link = url + "?pair=" + pair
 	r = requests.get(link)
