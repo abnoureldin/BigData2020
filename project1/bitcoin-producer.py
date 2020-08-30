@@ -1,8 +1,6 @@
 import json
 import requests
-import sys
 import threading
-import pandas as pd
 from kafka import KafkaProducer
 
 pair = 'XXBTZUSD'
