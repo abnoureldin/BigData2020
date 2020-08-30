@@ -12,6 +12,7 @@ def kraken(ticker):
 	link = url + "?pair=" + pair
 	r = requests.get(link)
 	trade = r.json()['result'][pair]
+	x={}
 	for num,value in enumerate(trade):
 		time = trade[num][0]
 		open = trade[num][1]
@@ -25,8 +26,8 @@ def kraken(ticker):
 				'high':high,'low':low,
 				'close':close,'vwap':vwap,
 				'volume':volume,'count':count}
-#		return x
-		print(d)
+		x.update(d)
+	print(x)
 
 #producer = KafkaProducer(bootstrap_servers='localhost:9099')
 
