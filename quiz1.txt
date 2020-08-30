@@ -1,0 +1,38 @@
+1. Explain Big Data and the five V's of big data?
+
+Big data is any data which cannot fit in memory and requires distributed computing to manage and
+analyse. The five V's are:
+Volume - the amount of data
+Velocity - the speed at which data is coming in
+Variety - the sources of data and its structure; structured, semi structured and unstructured.
+Veracity - the quality of data
+Value - the business insight which could be gained from the data
+
+2. What is a checkpoint in Hadoop?
+
+a periodic file system metadata merge of the namenode which merges fsimage file with metadata 
+edits file.
+
+3. What is the difference between an HDFS Block and an Input Split?
+
+a HDFS Block is the physical representation of data in Hadoop. Input Split is the map reduce
+logical representation of data present in the block.
+
+4. Explain the difference between NameNode, Backup Node and Checkpoint NameNode?
+
+The NamenNode holds metadata for the cluster and decides on how a file is distributed across 
+the cluster. Backup Node provides check pointing functionality and is in sync with the NameNode
+it also maintains its up to date in memory copy of the file system namespace.
+The Checkpoint node keeps track of latest checkpoint in a directory by downloading the edits file
+and the fsimage file from the namenode and merging it locally to keep track of the namespace.
+
+5. HDFS architecture?
+
+HDFS follows a master/slave architecture where one node acts as the master (namenode) and all other
+nodes act as slaves (datanodes). A secondary namenode exists for fault tolerance.
+
+6. Explain the 3 stages of MapReduce?
+
+The MapReduce paradigm consists of a mapper stage taking data and creating key value pairs
+and a reducer stage which carries out transformations on the data. Prior to the reducer phase
+the data is shuffled to bring all the keys together in order to speed up transformations.
