@@ -26,8 +26,8 @@ def kraken(pair):
 				'volume':volume,'count':count}
 		
 		dicts.append(d)
-	dicts  = json.dumps(dicts)
-	return dicts
+	x  = json.dumps(dicts)
+	return x
 
 producer = KafkaProducer(bootstrap_servers='localhost:9099')
 
