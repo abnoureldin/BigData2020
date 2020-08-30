@@ -12,7 +12,7 @@ def kraken(ticker):
 	link = url + "?pair=" + pair
 	r = requests.get(link)
 	trade = r.json()['result'][pair]
-	x={}
+	dicts = []
 	for num,value in enumerate(trade):
 		time = trade[num][0]
 		open = trade[num][1]
@@ -26,15 +26,17 @@ def kraken(ticker):
 				'high':high,'low':low,
 				'close':close,'vwap':vwap,
 				'volume':volume,'count':count}
-		x.update(d)
-	print(x)
+		
+		dicts.append(d)
+	dicts  = json.dumps(dicts)
+	return dicts
 
-#producer = KafkaProducer(bootstrap_servers='localhost:9099')
+producer = KafkaProducer(bootstrap_servers='localhost:9099')
 
-#def stream():
-#	threading.Timer(60.0,stream).start()
-#	producer.send('kraken',kraken(pair).encode('utf-8'))
+def stream():
+	threading.Timer(60.0,stream).start()
+	producer.send('kraken',kraken(pair).encode('utf-8'))
 
-#stream()
-#producer.flush()
-kraken(pair)
+stream()
+producer.flush()
+#kraken(pair)
