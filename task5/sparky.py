@@ -3,7 +3,7 @@ from pyspark import SparkContext
 sc = SparkContext(appName="Shakespeare")
 
 rdd = sc.textFile("/home/hadoop/BigData2020/Shakespeare.txt")
-rdd.take(5)
+print(rdd.take(20))
 
 def Reader(lines):
 	lines = lines.lower()
@@ -11,4 +11,7 @@ def Reader(lines):
 	return lines
 
 rdd1 = rdd.map(Reader)
-rdd1.take(5)
+print(rdd1.take(20))
+
+rdd2 = rdd1.map(lambda x: len(x))
+print("line count:",str(rdd2.take(20)))
