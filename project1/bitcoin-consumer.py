@@ -26,13 +26,11 @@ def readRDD(RDD):
                                 'high','low',
                                 'close','vwap',
                                 'volume','count']
-		check = all(col in df.columns for col in cols)
-		if check:
-			data = sqlContext.sql(
-					"SELECT "+
-					",".join(cols)+
-					" FROM Bitcoin_OHLC WHERE close IS NOT NULL")
-			data.show()
+		data = sqlContext.sql(
+				"SELECT "+
+				",".join(cols)+
+				" FROM Bitcoin_OHLC WHERE close IS NOT NULL")
+		data.show()
 
 if __name__ == "__main__":
 	main()
