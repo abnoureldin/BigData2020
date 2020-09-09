@@ -6,14 +6,33 @@ from pyspark.sql import SQLContext
 
 def main():
 	sc = SparkContext(appName='Bitcoin')
-	ssc = StreamingContext(sc,2)
+	ssc = StreamingContext(sc,60)
+	global sqlContext
+	sqlContext= SQLContext(sc)
+	sc.setLogLevel("WARN")
 	broker,topic = "localhost:9099","kraken"
 	kvs = KafkaUtils.createDirectStream(ssc,[topic],
 					{"metadata.broker.list":broker})
 	lines = kvs.map(lambda x: x[1])
-	lines.pprint()
+	lines.foreachRDD(lambda rdd: readRDD(rdd))
 	ssc.start()
 	ssc.awaitTermination()
+
+def readRDD(RDD):
+	if not RDD.isEmpty():
+		df = sqlContext.read.json(RDD)
+		df.registerTempTable("Bitcoin_OHLC")
+		cols = ['time','open',
+                                'high','low',
+                                'close','vwap',
+                                'volume','count']
+		check = all(col in df.columns for col in cols)
+		if check:
+			data = sqlContext.sql(
+					"SELECT "+
+					",".join(cols)+
+					" FROM Bitcoin_OHLC WHERE close IS NOT NULL")
+			data.show()
 
 if __name__ == "__main__":
 	main()
