@@ -7,6 +7,11 @@ from pyspark.sql import SQLContext
 def main():
 	sc = SparkContext(appName='Bitcoin')
 	ssc = StreamingContext(sc,60)
+	global ss
+	ss = SparkSession.builder.appName("Bitcoin")\
+		.config("spark.sql.warehouse.dir","/user/hive/warehouse")\
+		.config("hive.metastore.uris","thrift://localhost:9083")\
+		.enableHiveSupport().getOrCreate()
 	global sqlContext
 	sqlContext= SQLContext(sc)
 	sc.setLogLevel("WARN")
@@ -31,6 +36,7 @@ def readRDD(RDD):
 				",".join(cols)+
 				" FROM Bitcoin_OHLC WHERE close IS NOT NULL")
 		data.show()
-
+		data.write.saveAsTable(name="bitcoin.datastream",
+				format="hive",mode="append")
 if __name__ == "__main__":
 	main()

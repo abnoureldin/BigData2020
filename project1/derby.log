@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Fri Sep 11 16:37:34 BST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0174-7dd0-8dba-00000b9307d8 
+on database directory /home/ab/derby with class loader sun.misc.Launcher$AppClassLoader@61a52fbd 
+Loaded from file:/opt/hive-2.3.5/lib/derby-10.10.2.0.jar
+java.vendor=Private Build
+java.runtime.version=1.8.0_265-8u265-b01-0ubuntu2~18.04-b01
+user.dir=/home/ab/BigData2020/project1
+os.name=Linux
+os.arch=amd64
+os.version=5.4.0-47-generic
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

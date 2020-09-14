@@ -23,20 +23,24 @@ if __name__=="__main__":
 		.option(subscribeType, topics)\
 		.load()
 	
+	#schema = spark.read.option("multiLine",True)\
+	#	.format("json")\
+	#	.load("file:////home/ab/BigData2020/project1/ohlc.txt")\
+	#	.schema
 	
 	schema = StructType([
 		StructField("time",TimestampType()),
-		StructField("open",IntegerType()),
-		StructField("high",IntegerType()),
-		StructField("low",IntegerType()),
-		StructField("close",IntegerType()),
-		StructField("vwap",IntegerType()),
-		StructField("volume",IntegerType()),
-		StructField("count",IntegerType())
+		StructField("open",DoubleType()),
+		StructField("high",DoubleType()),
+		StructField("low",DoubleType()),
+		StructField("close",DoubleType()),
+		StructField("vwap",DoubleType()),
+		StructField("volume",DoubleType()),
+		StructField("count",DoubleType())
 		])
 
 	df = data.select(from_json(col("value").cast("string"), schema)\
-		.alias("bitcoin")).selectExpr("bitcoin .*")
+		.alias("bitcoin")).selectExpr("bitcoin.*")
 	
 	def write(df,epoch_id):
 		df.show()

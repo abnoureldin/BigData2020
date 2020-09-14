@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 import threading
@@ -28,6 +29,8 @@ def kraken(pair):
 		dicts.append(d)
 	x  = json.dumps(dicts)
 	return x
+
+#print(kraken(pair),"\n",file=open("ohlc.txt","w"))
 
 producer = KafkaProducer(bootstrap_servers='localhost:9099')
 
