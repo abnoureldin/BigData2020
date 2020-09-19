@@ -1,0 +1,28 @@
+creating a table into hive
+CREATE TABLE emp(id INT, first_name STRING, last_name STRING,
+		email STRING, gender STRING)
+	ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+	TBLPROPERTIES ('skip.header.line.count'='1');
+
+
+loading a csv into hive table
+LOAD DATA LOCAL INPATH ='/home/maria_dev/MOCK_DATA.csv' 
+OVERWRITE INTO TABLE emp;
+
+creating a table in hbase with column family
+create 'employee','details'
+
+create a linked table in hive
+CREATE EXTERNAL TABLE employee (key INT, first_name STRING,
+				last_name STRING, email STRING,
+				gender STRING)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.column.mapping" =
+		 ":key,details:first_name,details:last_name,
+		details:email,details:gender")
+TBLPROPERTIES ("hbase.tbale.name"="employee",
+		"hbase.mapred.output.outputtable"="employee");
+
+
+loading data into linked table
+FROM emp INSERT OVERWRITE TABLE employee SELECT *;
