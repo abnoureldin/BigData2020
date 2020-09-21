@@ -17,7 +17,8 @@ lines = kvs.map(lambda x: x[1])
 
 def readRDD(RDD):
         if not RDD.isEmpty():
-                df = sqlContext.read.json(RDD)
+                df = sqlContext.read\
+			.option("multiline",true).json(RDD)
                 df.registerTempTable("spotify_data")
                 cols = ['track','audio','artwork']
 
