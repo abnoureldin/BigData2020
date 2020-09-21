@@ -16,9 +16,19 @@ kvs = KafkaUtils.createDirectStream(ssc,[topic],
 				{"metadata.broker.list":broker})
 lines = kvs.map(lambda x: x[1])
 
-def readRDD(RDD):
+def _RDD(RDD):
         if not RDD.isEmpty():
-                df = sqlContext.read\
+		sink = "org.apache.hadoop.hbase.spark"
+		catalog = ''.join("""{
+    		"table":{"namespace":"default", "name":"spotify"},
+    		"rowkey":"key",
+    		"columns":{
+        		"track":{"cf":"rowkey", "col":"track", "type":"string"},
+        		"audio":{"cf":"cf", "col":"audio", "type":"string"},
+			"artwork":{"cf":"cf","col":"artwork","type":string}
+   		 	}
+			}""".split())
+		df = sqlContext.read\
 			.option("multiline",True).json(RDD)
                 df.registerTempTable("spotify_data")
                 cols = ['track','audio','artwork']
@@ -26,9 +36,11 @@ def readRDD(RDD):
                 data = sqlContext.sql("SELECT "+
                                         ",".join(cols)+
                                         " FROM spotify_data")
-                data.withColumn("track",explode(data.track)).show()
-		#data.show()
+                DF = data.withColumn("track",explode(data.track))
+		DF.write.options(catalog=catalog)\
+			.format(sink).save()
 
-lines.foreachRDD(lambda rdd: readRDD(rdd))
+lines.foreachRDD(lambda x: _RDD(x))
+
 ssc.start()
 ssc.awaitTermination()			
