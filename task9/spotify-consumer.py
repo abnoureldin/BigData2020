@@ -4,6 +4,7 @@ from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
+from pyspark.sql.functions import explode
 
 sc = SparkContext(appName='Spotify')
 ssc = StreamingContext(sc,2)
@@ -18,14 +19,15 @@ lines = kvs.map(lambda x: x[1])
 def readRDD(RDD):
         if not RDD.isEmpty():
                 df = sqlContext.read\
-			.option("multiline",true).json(RDD)
+			.option("multiline",True).json(RDD)
                 df.registerTempTable("spotify_data")
                 cols = ['track','audio','artwork']
 
                 data = sqlContext.sql("SELECT "+
                                         ",".join(cols)+
                                         " FROM spotify_data")
-                data.show()
+                data.withColumn("track",explode(data.track)).show()
+		#data.show()
 
 lines.foreachRDD(lambda rdd: readRDD(rdd))
 ssc.start()
