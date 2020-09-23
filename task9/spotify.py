@@ -31,7 +31,6 @@ x = json.dumps(d)
 
 servers = 'sandbox-hdp.hortonworks.com:6667'
 topic = 'spotify'
-
 producer = KafkaProducer(bootstrap_servers = servers)
 producer.send(topic,x.encode('utf-8'))
 producer.flush()
