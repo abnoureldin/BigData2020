@@ -3,16 +3,15 @@ import json
 from kafka import KafkaProducer
 import boto3
 import argparse
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", type=str, help="File Location.")
 args = parser.parse_args()
 
-
-
 def upload(filename):
 	if not args.f:
-		print("No file location specified.")
+		print("No file location specified. Provide -f <filepath>.")
 		exit()
 	name = filename.split('/')[-1]
 	name = name.strip().lower()
@@ -31,6 +30,7 @@ def upload(filename):
 	file = "https://audio-brain.s3.eu-west-2.amazonaws.com/"+name
 
 def audio(url):
+	print("Detecting match...")
 	token = str(open("api.txt","r").read().strip())
 
 	data = {
@@ -39,20 +39,25 @@ def audio(url):
     	'api_token': token
 	}
 	result = requests.post('https://api.audd.io/', data=data)
-	print(result.text)
+	print("Match status:")
+	parsed = json.loads(result.text)
 	with open('data.json', 'w', encoding='utf-8') as f:
-		json.dump(result.text, f, ensure_ascii=False, indent=4)
+		json.dump(parsed, f, ensure_ascii=False, indent=4)
 
 
 def producer(filename):
-	with open(filename) as f:
-		data = json.load(f)
-	
-	producer = KafkaProducer(bootstrap_servers="localhost:9099")
-	producer.send("audio",data.encode("utf-8"))
-	producer.flush()
+	data = json.load(open(filename))
+	if data['status'] == "success":
+		data = json.dumps(data)
+		
+		producer = KafkaProducer(bootstrap_servers="localhost:9099")
+		producer.send("audio-brain",data.encode("utf-8"))
+		producer.flush()
+		print("Stream sent.")
+	else:
+		print("Stream failed.")
 
 if __name__ == "__main__":
-	upload(args.f)
+	#upload(args.f)
 	#audio(file)
 	producer('data.json')
