@@ -14,28 +14,31 @@ spark-submit --conf "spark.mongodb.input.uri=mongodb://127.0.0.1/audio-brain.res
 
 def readRDD(rdd):
 	if not rdd.isEmpty():
-		df = sqlContext.read.option("multiLine",True).json(rdd)
+		df = ss.read.option("multiLine",True).json(rdd)
 		
 		df.registerTempTable("audio_brain")
 		cols = ["result"]
-		data = sqlContext.sql("SELECT "+
+		data = ss.sql("SELECT "+
 							",".join(cols)+
 							" FROM audio_brain")
 
 		result = data.select("result.*")
-		result.write.format("mongo")\
-		.mode("append").save()
+		result.write.format("mongo").mode("overwrite")\
+		.option("database","audio_brain")\
+		.option("collection", "result").save()
+		result.show()
+		result.printSchema()
 
 if __name__ == "__main__":
 	working_directory = "jars/*"
-	sc = SparkContext(appName='audio-brain')
+	sc = SparkContext(appName='audio_brain')
 	ssc = StreamingContext(sc,60)
 	sqlContext = SQLContext(sc)
 	spark = SparkSession(sc)
 	sc.setLogLevel("WARN")
-	ss = SparkSession.builder.appName("audio-brain")\
-		.config("spark.mongodb.input.uri", "mongodb://127.0.0.1/audio-brain.result")\
-		.config("spark.mongodb.output.uri", "mongodb://127.0.0.1/audio-brain.result")\
+	ss = SparkSession.builder.appName("audio_brain")\
+		.config("spark.mongodb.input.uri", "mongodb://127.0.0.1/audio_brain.result")\
+		.config("spark.mongodb.output.uri", "mongodb://127.0.0.1/audio_brain.result")\
 		.getOrCreate()
 	
 	broker,topic = "localhost:9099","audio-brain"
@@ -45,8 +48,6 @@ if __name__ == "__main__":
 	
 	lines = kvs.map(lambda x: x[1])
 	rdd = lines.foreachRDD(readRDD)
-	#json_schema = spark.read.json(lines.rdd.map(lambda row: row.json)).schema
-	#df.withColumn('json', from_json(col('json'), json_schema))
 
 	ssc.start()
 	ssc.awaitTermination()
