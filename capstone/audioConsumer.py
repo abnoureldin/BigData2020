@@ -33,7 +33,6 @@ if __name__ == "__main__":
 	working_directory = "jars/*"
 	sc = SparkContext(appName='audio_brain')
 	ssc = StreamingContext(sc,60)
-	sqlContext = SQLContext(sc)
 	spark = SparkSession(sc)
 	sc.setLogLevel("WARN")
 	ss = SparkSession.builder.appName("audio_brain")\
