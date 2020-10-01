@@ -3,8 +3,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import json
 from kafka import KafkaProducer
 
-cid = str(open("cid.txt","r").read())
-secret = str(open("secret.txt","r").read())
+cid = str(open("cid.txt","r").read().strip())
+secret = str(open("secret.txt","r").read().strip())
 
 client_credentials_manager = SpotifyClientCredentials(client_id=cid,
 				client_secret=secret)
