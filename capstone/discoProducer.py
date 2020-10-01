@@ -41,7 +41,7 @@ artist = spotify.artist(artist_uri)
 output = []
 
 for i in track_list:
-  output.append({artist['name']:i})
+  output.append(i)
 
 data = json.dumps(output)
 
