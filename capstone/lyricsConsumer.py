@@ -1,5 +1,6 @@
 import pymongo
 from pymongo import MongoClient
+import re
 
 client = MongoClient('mongodb://localhost:27017/')
 
@@ -13,4 +14,11 @@ for words in lyrics:
 	x = '{0} {1}'.format(words['_id'], words['value'])
 	disco.append(x)
 
-print(disco)
+cleaned = []
+
+for i in disco:
+	lines = i.replace("\n",'')
+	clean = re.sub(r'\w*\d\w*', '', lines).strip()
+	cleaned.append(clean)
+
+print(cleaned)
