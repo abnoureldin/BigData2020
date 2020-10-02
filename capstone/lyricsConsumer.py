@@ -7,5 +7,10 @@ db = client.audio_brain
 
 lyrics = db.lyrics.find()
 
+disco = []
+
 for words in lyrics:
-	print('{0} {1}'.format(words['_id'], words['value']))
+	x = '{0} {1}'.format(words['_id'], words['value'])
+	disco.append(x)
+
+print(disco)
