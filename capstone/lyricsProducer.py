@@ -1,5 +1,15 @@
 from musixmatch import Musixmatch
 import json
+from pyspark.sql.types import StringType
+from pyspark.sql import SparkSession
+from kafka import KafkaProducer
+
+"""
+spark-submit --conf "spark.mongodb.input.uri=mongodb://127.0.0.1/audio_brain.lyrics?readPreference=primaryPreferred" \
+             --conf "spark.mongodb.output.uri=mongodb://127.0.0.1/audio_brain.lyrics" \
+             --packages org.mongodb.spark:mongo-spark-connector_2.11:2.3.4 \
+             --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.1.1 lyricsProducer.py
+"""
 
 x = json.load(open("data.json"))
 
@@ -32,7 +42,28 @@ for i,x in enumerate(output):
 	except:
 		None
 
-print(disco)
+f = open("lyrics.txt","w")
+print(disco,file=f)
+
+data = json.dumps(disco)
+
+producer = KafkaProducer(bootstrap_servers="localhost:9099")
+producer.send("audio-lyrics",data.encode("utf-8"))
+producer.flush()
+
+
+spark = SparkSession.builder.appName("audio_brain")\
+    .config("spark.mongodb.input.uri", "mongodb://127.0.0.1/audio_brain.lyrics")\
+    .config("spark.mongodb.output.uri", "mongodb://127.0.0.1/audio_brain.lyrics")\
+    .getOrCreate()
+
+result = spark.createDataFrame(disco, StringType())
+
+result.write.format("mongo").mode("overwrite")\
+    .option("database","audio_brain")\
+    .option("collection", "lyrics").save()
+
+result.show()
 
 
 

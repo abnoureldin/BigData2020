@@ -1,7 +1,6 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import json
-from kafka import KafkaProducer
 from pyspark.sql.types import StringType
 from pyspark.sql import SparkSession
 from kafka import KafkaProducer
