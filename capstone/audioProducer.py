@@ -58,6 +58,6 @@ def producer(filename):
 		print("Stream failed.")
 
 if __name__ == "__main__":
-	#upload(args.f)
-	#audio(file)
+	upload(args.f)
+	audio(file)
 	producer('data.json')
